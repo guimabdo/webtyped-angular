@@ -1,19 +1,46 @@
-# Starter pipeline
-# Start with a minimal pipeline that you can customize to build and deploy your code.
-# Add steps that build, run tests, deploy, and more:
-# https://aka.ms/yaml
-
+name: $(Build.SourceBranch)$(rev:.r)
 trigger:
-- master
-
-pool:
-  vmImage: 'ubuntu-latest'
-
+  - releases/*
 steps:
-- script: echo Hello, world!
-  displayName: 'Run a one-line script'
+- task: PowerShell@2
+  inputs:
+    targetType: 'inline'
+    script: |
+      #Get build number: sourceBranch.rev
+      $v = ($env:BUILD_BUILDNUMBER)
+      #Replace these things...
+      $v = $v.replace('refs_', '')
+      $v = $v.replace('heads_', '')
+      $v = $v.replace('releases_','')
+      #not in X.X.X pattern, add 0.0.0 in front
+      echo $v
+      if($v -notmatch '^\d+\.\d+.\d+$'){
+        $v = '0.0.0-' + $v
+      }
+      echo "##vso[task.setvariable variable=version;isOutput=true]$v"
+      echo 'version has been set ' $v
+  name: 'SetVersionStep'
+  displayName: 'Setting version'
 
-- script: |
-    echo Add other tasks to build, test, and deploy your project.
-    echo See https://aka.ms/yaml
-  displayName: 'Run a multi-line script'
+- task: PowerShell@2
+  inputs:
+    targetType: 'inline'
+    script: |
+      (Get-Content ./package.json) | ForEach-Object { $_ -replace "0.0.0", "$(SetVersionStep.version)" } | Set-Content ./package.json
+  displayName: 'Changing package.json version'
+
+- task: Npm@1
+  inputs:
+    command: 'install'
+
+- script: tsc
+  displayName: 'Running tsc'
+  
+- task: Npm@1
+  inputs:
+    command: 'custom'
+    customCommand: 'pack'
+    
+- task: PublishBuildArtifacts@1
+  inputs:
+    PathtoPublish: 'guimabdo-webtyped-angular-$(SetVersionStep.version).tgz'
