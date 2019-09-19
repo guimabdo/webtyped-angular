@@ -90,6 +90,7 @@ stages:
            - task: Npm@1
              inputs:
                command: 'custom'
+               workingDir: '$(Pipeline.Workspace)'
                customCommand: 'publish guimabdo-webtyped-angular-$(SetVersionStep.version).tgz --access public'
              
              
