@@ -55,6 +55,8 @@ stages:
 
 - stage: Deploy
   dependsOn: Build
+  variables:
+    packageVersion: $[ dependencies.Build.outputs['SetVersionStep.version'] ]
   displayName: Deploy stage
   jobs:
   - deployment: Deploy
@@ -64,11 +66,13 @@ stages:
        deploy:
          steps:
            - task: DownloadPipelineArtifact@2
-             name: 'tarball'
+             inputs:
+              artifactName: 'tarball'
+
            - task: Npm@1
              inputs:
                command: 'custom'
-               customCommand: 'publish --access public'
+               customCommand: 'publish guimabdo-webtyped-angular-$(packageVersion).tgz --access public'
              
              
 
