@@ -54,6 +54,7 @@ stages:
        targetPath: 'guimabdo-webtyped-angular-$(SetVersionStep.version).tgz'
 
 - stage: Deploy
+  condition: and(succeeded(), startsWith(variables['Build.SourceBranch'], 'refs/heads/releases/'))
   dependsOn: Build
   displayName: Deploy stage
   jobs:
@@ -92,6 +93,7 @@ stages:
                command: 'custom'
                workingDir: '$(Pipeline.Workspace)'
                customCommand: 'publish guimabdo-webtyped-angular-$(SetVersionStep.version).tgz --access public'
+               customEndpoint: 'npm - guimabdo'
              
              
 
