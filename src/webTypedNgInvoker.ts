@@ -1,6 +1,6 @@
 ﻿import { HttpClient, HttpParams } from '@angular/common/http';
 import { Optional, Inject, Injectable } from '@angular/core';
-import { WebTypedEventEmitterService } from './';
+import { WebTypedEventEmitterService } from './public_api';
 import { Observable } from 'rxjs';
 import { tap } from 'rxjs/operators';
 import { WebTypedCallInfo, WebTypedUtils, WebTypedInvoker } from '@guimabdo/webtyped-common';

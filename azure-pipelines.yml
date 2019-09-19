@@ -26,8 +26,8 @@ stages:
           (Get-Content ./package.json) | ForEach-Object { $_ -replace "0.0.0", "$(SetVersionStep.version)" } | Set-Content ./package.json
       displayName: 'Changing package.json version'
 
-    - script: tsc
-      displayName: 'Running tsc'
+    - script: ng build
+      displayName: 'Running ng'
   
     - task: Npm@1
       inputs:

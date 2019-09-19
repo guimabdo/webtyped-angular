@@ -1,7 +1,7 @@
 {
 	"name": "@guimabdo/webtyped-angular",
 	"version": "0.0.0",
-	"description": "WebTyped Angular",
+	"description": "WebTyped Angular connector and helpers",
 	"author": {
 		"name": "guimabdo"
 	},
@@ -23,14 +23,27 @@
 		"@guimabdo/webtyped-common": "^0.29.0-dev.158"
 	},
 	"devDependencies": {
-		"rxjs": "6.0.0",
-		"@angular/core": "6.0.0",
-		"@angular/common": "6.0.0",
-		"typescript": "3.0.1",
-		"@guimabdo/webtyped-common": "^0.29.0-dev.158"
+		"@guimabdo/webtyped-common": "^0.29.0-dev.158",
+		"@angular-devkit/build-angular": "~0.13.9",
+		"@angular-devkit/build-ng-packagr": "~0.13.9",
+		"@angular/common": "~7.2.15",
+		"@angular/cli": "~7.3.9",
+		"@angular/compiler-cli": "~7.2.15",
+		"ng-packagr": "^4.7.1",
+		"tsickle": "0.34.0",
+		"typescript": "~3.2.4",
+		"zone.js": "^0.8.29",
+		"@angular/core": "~7.2.13",
+		"@angular/compiler": "~7.2.15",
+		"rxjs": "^6.4.0"
 	},
-	"files": [
-		"*.js",
-		"*.d.ts"
-	]
+	"main": "dist/bundles/guimabdo-webtyped-angular.umd.js",
+	"module": "dist/fesm5/guimabdo-webtyped-angular.js",
+	"es2015": "dist/fesm2015/guimabdo-webtyped-angular.js",
+	"esm5": "dist/esm5/guimabdo-webtyped-ngular.js",
+	"esm2015": "dist/esm2015/guimabdo-webtyped-angular.js",
+	"fesm5": "dist/fesm5/cguimabdo-webtyped-angular.js",
+	"fesm2015": "dist/fesm2015/guimabdo-webtyped-angular.js",
+	"typings": "dist/guimabdo-webtyped-angular.d.ts",
+	"metadata": "dist/guimabdo-webtyped-angular.metadata.json"
 }
