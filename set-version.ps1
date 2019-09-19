@@ -4,6 +4,7 @@
           $v = $v.replace('refs_', '')
           $v = $v.replace('heads_', '')
           $v = $v.replace('releases_','')
+          $v = $v.replace('_', '-')
           #not in X.X.X pattern, add 0.0.0 in front
           echo $v
           if($v -notmatch '^\d+\.\d+.\d+'){
