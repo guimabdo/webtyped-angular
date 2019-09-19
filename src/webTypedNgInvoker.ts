@@ -1,6 +1,6 @@
 ﻿import { HttpClient, HttpParams } from '@angular/common/http';
 import { Optional, Inject, Injectable } from '@angular/core';
-import { WebTypedEventEmitterService } from './public_api';
+import { WebTypedEventEmitterService } from './webTypedEventEmitter.service';
 import { Observable } from 'rxjs';
 import { tap } from 'rxjs/operators';
 import { WebTypedCallInfo, WebTypedUtils, WebTypedInvoker } from '@guimabdo/webtyped-common';
@@ -78,4 +78,13 @@ export class WebTypedNgInvoker extends WebTypedInvoker {
 			);
 		return coreObs;
 	}
+
+	public withPromises(): WebTypedInvoker {
+        let me = this;
+        return <any>{
+            invoke: function () {
+                return me.invoke.apply(me, [...arguments]).toPromise();
+            }
+        }
+    }
 }
