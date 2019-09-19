@@ -58,6 +58,7 @@ stages:
   displayName: Deploy stage
   jobs:
   - deployment: Deploy
+    environment: npm
     strategy:
      runOnce:
        deploy:
