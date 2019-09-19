@@ -52,7 +52,7 @@ stages:
  
 
 - stage: Deploy
-  condition: or(variables['force_deploy'],and(succeeded(), startsWith(variables['Build.SourceBranch'], 'refs/heads/releases/')))
+  condition: and(succeeded(), startsWith(variables['Build.SourceBranch'], 'refs/heads/releases/'))
   dependsOn: Build
   displayName: Deploy stage
   jobs:
