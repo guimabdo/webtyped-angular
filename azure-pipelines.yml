@@ -55,8 +55,6 @@ stages:
 
 - stage: Deploy
   dependsOn: Build
-  variables:
-    packageVersion: $[ dependencies.Build.outputs['SetVersionStep.version'] ]
   displayName: Deploy stage
   jobs:
   - deployment: Deploy
@@ -65,6 +63,26 @@ stages:
      runOnce:
        deploy:
          steps:
+           - task: PowerShell@2
+             inputs:
+               targetType: 'inline'
+               script: |
+                 #Get build number: sourceBranch.rev
+                 $v = ($env:BUILD_BUILDNUMBER)
+                 #Replace these things...
+                 $v = $v.replace('refs_', '')
+                 $v = $v.replace('heads_', '')
+                 $v = $v.replace('releases_','')
+                 #not in X.X.X pattern, add 0.0.0 in front
+                 echo $v
+                 if($v -notmatch '^\d+\.\d+.\d+$'){
+                   $v = '0.0.0-' + $v
+                 }
+                 echo "##vso[task.setvariable variable=version;isOutput=true]$v"
+                 echo 'version has been set ' $v
+             name: 'SetVersionStep'
+             displayName: 'Setting version'
+
            - task: DownloadPipelineArtifact@2
              inputs:
               artifactName: 'tarball'
@@ -72,7 +90,7 @@ stages:
            - task: Npm@1
              inputs:
                command: 'custom'
-               customCommand: 'publish guimabdo-webtyped-angular-$(packageVersion).tgz --access public'
+               customCommand: 'publish guimabdo-webtyped-angular-$(SetVersionStep.version).tgz --access public'
              
              
 
