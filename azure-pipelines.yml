@@ -48,6 +48,29 @@ stages:
         command: 'custom'
         customCommand: 'pack'
     
-    - task: PublishBuildArtifacts@1
+    - task: PublishPipelineArtifact@1
       inputs:
-        PathtoPublish: 'guimabdo-webtyped-angular-$(SetVersionStep.version).tgz'
+       artifact: 'tarball'
+       targetPath: 'guimabdo-webtyped-angular-$(SetVersionStep.version).tgz'
+
+- stage: Deploy
+  dependsOn: Build
+  displayName: Deploy stage
+  jobs:
+  - deployment: Deploy
+    strategy:
+     runOnce:
+       deploy:
+         steps:
+           - task: DownloadPipelineArtifact@2
+             name: 'tarball'
+           - task: Npm@1
+             inputs:
+               command: 'custom'
+               customCommand: 'publish --access public'
+             
+             
+
+      
+    
+        
