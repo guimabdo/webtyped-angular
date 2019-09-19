@@ -9,6 +9,10 @@ stages:
   jobs:
   - job: Build
     steps:
+    - task: Npm@1
+      inputs:
+        command: 'install'
+
     - task: PowerShell@2
       inputs:
         filePath: 'set-version.ps1'
@@ -21,10 +25,6 @@ stages:
         script: |
           (Get-Content ./package.json) | ForEach-Object { $_ -replace "0.0.0", "$(SetVersionStep.version)" } | Set-Content ./package.json
       displayName: 'Changing package.json version'
-
-    - task: Npm@1
-      inputs:
-        command: 'install'
 
     - script: tsc
       displayName: 'Running tsc'
