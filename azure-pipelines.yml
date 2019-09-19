@@ -11,7 +11,7 @@ stages:
     steps:
     - task: PowerShell@2
       inputs:
-        filePath: 'set-version.ps'
+        filePath: 'set-version.ps1'
       name: 'SetVersionStep'
       displayName: 'Setting version'
 
@@ -52,7 +52,7 @@ stages:
          steps:
            - task: PowerShell@2
              inputs:
-               filePath: 'set-version.ps'
+               filePath: 'set-version.ps1'
              name: 'SetVersionStep'
              displayName: 'Setting version'
 
