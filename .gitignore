@@ -1,9 +1,5 @@
 ﻿*.js
 *.d.ts
 *.js.map
-<<<<<<< HEAD
 node_modules/
 dist/
-=======
-node_modules/
->>>>>>> master

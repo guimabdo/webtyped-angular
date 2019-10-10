@@ -40,11 +40,16 @@ export class WebTypedNgInvoker extends WebTypedInvoker {
 			options.params = this.generateHttpParams(search);
         }
 
+		//If body is string, force to send it as JSON
         if (body && typeof (body) === 'string') {
             options.headers = { 'Content-Type': 'application/json' };
-            options.responseType = 'text';
             body = JSON.stringify(body);
-        }
+		}
+		
+		//If return type is string, tell angular to not parse it to JSON
+		if(info.returnTypeName === 'string'){
+			options.responseType = 'text';
+		}
 
 		var httpObservable: Observable<any>;
 		switch (httpMethod) {
