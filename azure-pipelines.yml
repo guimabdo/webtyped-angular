@@ -13,17 +13,17 @@ stages:
   displayName: Build
   jobs:
   - job: SetBuildName
-      steps:
-        - powershell: Write-Host "##vso[build.updatebuildnumber]$env:Build_SourceBranchName.$env:rev"
-          displayName: Setting build name for Release
-          condition: contains(variables['Build.SourceBranch'], '/releases/')
-        - powershell: Write-Host "##vso[build.updatebuildnumber]0.0.0-$env:Build_SourceBranchName.$env:rev"
-          displayName: Setting build name for Dev
-          condition: not(contains(variables['Build.SourceBranch'], '/releases/'))
+    steps:
+      - powershell: Write-Host "##vso[build.updatebuildnumber]$env:Build_SourceBranchName.$env:rev"
+        displayName: Setting build name for Release
+        condition: contains(variables['Build.SourceBranch'], '/releases/')
+      - powershell: Write-Host "##vso[build.updatebuildnumber]0.0.0-$env:Build_SourceBranchName.$env:rev"
+        displayName: Setting build name for Dev
+        condition: not(contains(variables['Build.SourceBranch'], '/releases/'))
 
-    - job: Build
-      dependsOn: SetBuildName
-      steps:
+  - job: Build
+    dependsOn: SetBuildName
+    steps:
       - script: npm install
       - powershell: (Get-Content ./package.json) | ForEach-Object { $_ -replace "0.0.0", "$(Build.BuildNumber)" } | Set-Content ./package.json
       - script: npx ng build
