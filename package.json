@@ -20,9 +20,10 @@
 		"rxjs": ">=6.0.0",
 		"@angular/core": ">=6.0.0",
 		"@angular/common": ">=6.0.0",
-		"@guimabdo/webtyped-common": "^0.29.0-dev.158"
+		"@guimabdo/webtyped-common": "^0.29.1-dev.2"
 	},
 	"devDependencies": {
+<<<<<<< HEAD
 		"@guimabdo/webtyped-common": "^0.29.0-dev.158",
 		"@angular-devkit/build-angular": "~0.13.9",
 		"@angular-devkit/build-ng-packagr": "~0.13.9",
@@ -36,6 +37,13 @@
 		"@angular/core": "~7.2.13",
 		"@angular/compiler": "~7.2.15",
 		"rxjs": "^6.4.0"
+=======
+		"rxjs": "6.0.0",
+		"@angular/core": "6.0.0",
+		"@angular/common": "6.0.0",
+		"typescript": "3.0.1",
+		"@guimabdo/webtyped-common": "^0.29.1-dev.2"
+>>>>>>> master
 	},
 	"main": "dist/bundles/guimabdo-webtyped-angular.umd.js",
 	"module": "dist/fesm5/guimabdo-webtyped-angular.js",
