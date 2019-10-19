@@ -1,54 +1,37 @@
-
 name: $(Build.SourceBranch)$(rev:.r)
 trigger:
   - releases/*
+
+pool:
+  vmImage: 'windows-latest'
+
+variables:
+  rev: $[counter(variables['Build.SourceBranch'], 0)]
+
 stages:
 - stage: Build
   displayName: Build
   jobs:
-  - job: Build
-    steps:
-    - task: Npm@1
-      inputs:
-        command: 'install'
+    - job: SetBuildName
+      steps:
+        - powershell: Write-Host "##vso[build.updatebuildnumber]$env:Build_SourceBranchName.$env:rev"
+          displayName: Setting build name for Release
+          condition: contains(variables['Build.SourceBranch'], '/releases/')
+        - powershell: Write-Host "##vso[build.updatebuildnumber]0.0.0-$env:Build_SourceBranchName.$env:rev"
+          displayName: Setting build name for Dev
+          condition: not(contains(variables['Build.SourceBranch'], '/releases/'))
 
-    - task: PowerShell@2
-      inputs:
-        filePath: 'set-version.ps1'
-      name: 'SetVersionStep'
-      displayName: 'Setting version'
-
-    - task: PowerShell@2
-      inputs:
-       targetType: 'inline'
-       script: |
-          Set-Content ./version.txt -Value $(SetVersionStep.version)
-
-    - task: PublishPipelineArtifact@1
-      inputs:
-       artifact: 'version'
-       targetPath: 'version.txt'
-
-    - task: PowerShell@2
-      inputs:
-        targetType: 'inline'
-        script: |
-          (Get-Content ./package.json) | ForEach-Object { $_ -replace "0.0.0", "$(SetVersionStep.version)" } | Set-Content ./package.json
-      displayName: 'Changing package.json version'
-
-    - script: tsc
-      displayName: 'Running tsc'
-  
-    - task: Npm@1
-      inputs:
-        command: 'custom'
-        customCommand: 'pack'
-    
-    - task: PublishPipelineArtifact@1
-      inputs:
-       artifact: 'tarball'
-       targetPath: 'guimabdo-webtyped-angular-$(SetVersionStep.version).tgz'
- 
+    - job: Build
+      dependsOn: SetBuildName
+      steps:
+      - script: npm install
+      - script: tsc
+      - powershell: (Get-Content ./package.json) | ForEach-Object { $_ -replace "0.0.0", "$(Build.BuildNumber)" } | Set-Content ./package.json
+      - script: npm pack
+      - task: PublishPipelineArtifact@1
+        inputs:
+         artifact: 'tarball'
+         targetPath: 'guimabdo-webtyped-angular-$(Build.BuildNumber).tgz'
 
 - stage: Deploy
   condition: and(succeeded(), startsWith(variables['Build.SourceBranch'], 'refs/heads/releases/'))
@@ -56,33 +39,18 @@ stages:
   displayName: Deploy stage
   jobs:
   - deployment: Deploy
-    environment: npm
+    environment: npm-guimabdo-webtyped-angular
+    displayName: NPM - @guimabdo/webtyped-angular
     strategy:
      runOnce:
        deploy:
          steps:
            - task: DownloadPipelineArtifact@2
              inputs:
-               artifactName: 'version'
-           - task: PowerShell@2
-             inputs:
-
-               targetType: 'inline'
-               script: |
-                 $v = Get-Content .\version.txt -Raw 
-                 
-                 echo "##vso[task.setvariable variable=version;isOutput=true]$v"
-               workingDirectory: '$(Pipeline.Workspace)'
-             name: 'SetVersionStep'
-             displayName: 'Setting version'
-
-           - task: DownloadPipelineArtifact@2
-             inputs:
               artifactName: 'tarball'
-
            - task: Npm@1
              inputs:
                command: 'custom'
                workingDir: '$(Pipeline.Workspace)'
-               customCommand: 'publish guimabdo-webtyped-angular-$(SetVersionStep.version).tgz --access public'
+               customCommand: 'publish guimabdo-webtyped-angular-$(Build.BuildNumber).tgz --access public'
                customEndpoint: 'npm - guimabdo'
