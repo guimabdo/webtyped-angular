@@ -28,8 +28,9 @@ export class WebTypedNgInvoker extends WebTypedInvoker {
 		action: string,
 		httpMethod: string, 
 		body?: any, 
-		search?: any
-		): Observable<TResult> {
+		search?: any,
+		expects?: any
+		): Observable<TResult> | Promise<TResult> {
 		let httpClient = this.httpClient;
 		let url = WebTypedUtils.resolveActionUrl(this.baseUrl, api, action);
 	
@@ -81,9 +82,20 @@ export class WebTypedNgInvoker extends WebTypedInvoker {
 
 					})
 			);
+
+		//Expected return type
+		if(expects){
+			//Native promise
+			if(expects.name == 'Promise' && !expects.module){
+				return coreObs.toPromise();
+			}
+		}
+		
+		//Defaults to observable
 		return coreObs;
 	}
 
+	/*
 	public withPromises(): WebTypedInvoker {
         let me = this;
         return <any>{
@@ -91,5 +103,6 @@ export class WebTypedNgInvoker extends WebTypedInvoker {
                 return me.invoke.apply(me, [...arguments]).toPromise();
             }
         }
-    }
+	}
+	*/
 }
